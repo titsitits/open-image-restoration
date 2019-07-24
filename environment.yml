@@ -1,0 +1,25 @@
+name: imagepipeline
+channels:
+- fastai
+- conda-forge
+- defaults
+- pytorch #Added by mickael tits
+dependencies:
+- tensorflow-gpu
+- keras
+- pytorch>=1.1.0 #Added by mickael tits
+- torchvision>=0.3.0 #Added by mickael tits
+- fastai
+- ffmpeg
+- youtube-dl
+- jupyterlab
+- tensorboardX>=1.6
+- scipy<=1.0.0
+- opencv
+- pip
+- scikit-image
+- pillow
+
+- pip:
+  - ffmpeg-python==0.1.17
+#  - opencv-python>=3.3.0.10

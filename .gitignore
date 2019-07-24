@@ -1,0 +1,20 @@
+*.jpg
+*.png
+*.PNG
+*.JPG
+*.zip
+/__pycache__
+/DeOldify
+/DNCNN_ignored
+*_ignored
+./denoiser_NLRN_DNCNN.py
+
+.ipynb_checkpoints
+
+*/.ipynb_checkpoints
+denoiser_NLRN_DNCNN.py
+
+.*  # ignore all hidden files and folders
+!/.gitignore  # explicitly do not ignore .gitignore
+
+
