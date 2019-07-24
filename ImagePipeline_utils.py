@@ -5,6 +5,7 @@ import numpy as np
 import os
 from contextlib import contextmanager
 from numba import cuda as ncuda
+import sys
 
 @contextmanager
 def timing(description: str) -> None:
