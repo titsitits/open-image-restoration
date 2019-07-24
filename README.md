@@ -1,4 +1,4 @@
-# State-of-the-art Open-source Image Restoration
+# An Open-source framework for image restoration
 This project packages various deep-learning-based, state-of-the-art, and open source (MIT or Apache licenses) image restoration techniques.
 
 ## Demo
