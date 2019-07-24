@@ -5,7 +5,7 @@ This project packages various deep-learning-based, state-of-the-art, and open so
 The project is a work in progress. However, it is already functional and can be tested through this [demo in google Colab](https://colab.research.google.com/drive/1TIksWoyd4L_qR73VoSF6igbKa8AnyKjG).
 
 ## Technical details
-The algorithms currently included in the packages are:
+The algorithms currently included in the packages are directly used or slightly adapted from:
 
 ### 1. Denoising
 NLRN - Liu et al. 2018. Non-Local Recurrent Network for Image Restoration (NeurIPS 2018) - MIT License
