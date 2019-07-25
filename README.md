@@ -1,4 +1,7 @@
 # A selection of State-ot-the-art, Open-source, Usable, and Pythonic techniques for Image Restoration
+
+![Anne Franck Image Restoration](https://github.com/titsitits/open-image-restoration/blob/master/Anne-Franck.png)
+
 ## Description
 This project gathers together and packages various image restoration techniques that follow various criteria:
 * State-of-the-art (they are all based on Deep Learning)
