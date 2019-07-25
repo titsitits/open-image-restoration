@@ -14,14 +14,17 @@ The algorithms currently included in the packages are directly replicated or sli
 
 ### 1. Denoising
 NLRN - Liu et al. 2018. Non-Local Recurrent Network for Image Restoration (NeurIPS 2018) - MIT License
+
 https://github.com/Ding-Liu/NLRN
 
 ### 2. Colorization
 DeOldify ("NoGAN" algorithm) - Jason Antic, 2019 - MIT License
+
 https://github.com/jantic/DeOldify
 
 ### 3. Super-resolution
-ESRGAN - Wang et al. 2018. ESRGAN: Enhanced super-resolution generative adversarial networks (ECCV 2018) - Apache-2.0 license
+ESRGAN - Wang et al. 2018. ESRGAN: Enhanced super-resolution generative adversarial networks (ECCV 2018) - Apache-2.0 License
+
 https://github.com/xinntao/ESRGAN
 
 Many thanks to the authors of these awesome works and for sharing them as open-source projects. 
