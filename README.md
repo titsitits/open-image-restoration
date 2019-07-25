@@ -2,7 +2,7 @@
 This project gathers together and packages various image restoration techniques that follow various criteria:
 * State-of-the-art (they are all based on Deep Learning)
 * Open source (MIT or Apache licenses)
-* Usable (a pretrained model is available)
+* Usable (a pretrained model is available, and the code does not need painfull<sup>1</sup> dependencies)
 * Python implementation (easier to use together, to share, and especially to use in Google Colab).
 
 ## Demo
@@ -25,3 +25,6 @@ https://github.com/xinntao/ESRGAN
 
 Many thanks to the authors of these awesome works and for sharing them as open-source projects. 
 
+
+
+<sup>1</sup>: In my research of IR algorithms, I subjectively considered Matlab and Caffe as painfull dependencies. Matlab is simply not free (and simpy not usable in Google colab), and Caffe hard to install, especially in Google Colab. Both of these issues make the algorithms hard to share to the community.
