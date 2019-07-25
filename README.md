@@ -1,15 +1,15 @@
-# An Open-source framework for image restoration
+# A set of State-ot-the-art, Open-source, Usable, and Pythonic techniques for Image Restoration (SOUPIR?)
 This project gathers together and packages various image restoration techniques that follow various criteria:
 * State-of-the-art (they are all based on Deep Learning)
 * Open source (MIT or Apache licenses)
 * Usable (a pretrained model is available)
-* Python implementation (easier to 
+* Python implementation (easier to use together, to share, and especially to use in Google Colab).
 
 ## Demo
 The project is a work in progress. However, it is already functional and can be tested through this [demo in google Colab](https://colab.research.google.com/github/titsitits/open-image-restoration/blob/master/ImageRestorationColab.ipynb).
 
 ## Technical details
-The algorithms currently included in the packages are directly replicated or slightly adapted from external github repositories (see below). These methods were selected based on the above criteria, and after a comparison with other methods (comparison colab notebooks are coming soon).
+The algorithms currently included in the packages are directly replicated or slightly adapted from external github repositories (see below). These methods were selected based on the above criteria, and after a comparison with other methods (comparison colab notebooks are coming soon). 
 
 ### 1. Denoising
 NLRN - Liu et al. 2018. Non-Local Recurrent Network for Image Restoration (NeurIPS 2018) - MIT License
