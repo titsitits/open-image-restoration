@@ -30,7 +30,7 @@ ESRGAN - Wang et al. 2018. ESRGAN: Enhanced super-resolution generative adversar
 
 https://github.com/xinntao/ESRGAN
 
-Many thanks to the authors of these awesome contributions to image restoration, and for sharing them as open-source projects. 
+Many thanks to the authors of these awesome contributions to image restoration research, and for sharing them as open-source projects. 
 
 
 ---
