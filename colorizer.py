@@ -28,8 +28,8 @@ def colorize(args):
 	except Exception as e:
 		print("Model could not be loaded. The file may be missing or corrupted. Let's try to download it again...")
 			model_dir = path.join(args.git_dir, 'models')
-	
-			if not path.exists(model_dir):	
+
+			if not path.exists(model_dir):
 				os.makedirs(model_dir)
 
 			model_path = path.join(args.git_dir, 'models/ColorizeArtistic_gen.pth')
@@ -39,7 +39,7 @@ def colorize(args):
 			
 			command = "wget wget https://www.dropbox.com/s/zkehq1uwahhbc2o/ColorizeArtistic_gen.pth?dl=0 -O " + model_path
 			sub = subprocess.call(command, shell=True)
-		
+	
 	
 	count = 0
 	
