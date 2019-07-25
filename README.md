@@ -4,7 +4,7 @@
 
 ## Description
 This project gathers together and packages various image restoration techniques that follow various criteria:
-* State-of-the-art (they are all based on Deep Learning; as of today (25/07/2019 at time of writing), NLRN and ESRGAN are on first stage in various leaderboards, see [here](https://paperswithcode.com/paper/non-local-recurrent-network-for-image) and [here](https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative) ).
+* State-of-the-art (they are all based on Deep Learning; as of today (25/07/2019 at time of writing), NLRN and ESRGAN are leaders in various leaderboards maintained by paperswithcode.com, see [here](https://paperswithcode.com/paper/non-local-recurrent-network-for-image) and [here](https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative) ).
 * Open source (MIT or Apache licenses)
 * Usable (a pretrained model is available, and the code does not need painfull<sup>1</sup> dependencies)
 * Python implementation (easier to use together, to share, and especially to use in Google Colab).
