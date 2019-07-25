@@ -26,5 +26,6 @@ https://github.com/xinntao/ESRGAN
 Many thanks to the authors of these awesome works and for sharing them as open-source projects. 
 
 
+---
 
 <sup>1</sup>: In my research of IR algorithms, I subjectively considered Matlab and Caffe as painfull dependencies. Matlab is simply not free (and simpy not usable in Google colab), and Caffe hard to install, especially in Google Colab. Both of these issues make the algorithms hard to share to the community.
