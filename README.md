@@ -4,7 +4,7 @@
 
 ## Description
 This project gathers together and packages various image restoration techniques that follow various criteria:
-* State-of-the-art (they are all based on Deep Learning)
+* State-of-the-art (they are all based on Deep Learning; as of today (25/07/2019 at time of writing), NLRN and ESRGAN are on first stage in various leaderboards, see [here](https://paperswithcode.com/paper/non-local-recurrent-network-for-image) and [here](https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative) ).
 * Open source (MIT or Apache licenses)
 * Usable (a pretrained model is available, and the code does not need painfull<sup>1</sup> dependencies)
 * Python implementation (easier to use together, to share, and especially to use in Google Colab).
@@ -20,15 +20,21 @@ NLRN - Liu et al. 2018. Non-Local Recurrent Network for Image Restoration (NeurI
 
 https://github.com/Ding-Liu/NLRN
 
+https://paperswithcode.com/paper/non-local-recurrent-network-for-image
+
 ### 2. Colorization
 DeOldify ("NoGAN" algorithm) - Jason Antic, 2019 - MIT License
 
 https://github.com/jantic/DeOldify
 
+(no leaderboard associated... yet).
+
 ### 3. Super-resolution
 ESRGAN - Wang et al. 2018. ESRGAN: Enhanced super-resolution generative adversarial networks (ECCV 2018) - Apache-2.0 License
 
 https://github.com/xinntao/ESRGAN
+
+https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative
 
 Many thanks to the authors of these awesome contributions to image restoration research, and for sharing them as open-source projects. 
 
