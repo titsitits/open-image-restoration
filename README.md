@@ -1,4 +1,5 @@
 # A set of State-ot-the-art, Open-source, Usable, and Pythonic techniques for Image Restoration (SOUPIR?)
+## Description
 This project gathers together and packages various image restoration techniques that follow various criteria:
 * State-of-the-art (they are all based on Deep Learning)
 * Open source (MIT or Apache licenses)
