@@ -16,5 +16,8 @@ denoiser_NLRN_DNCNN.py
 
 .*  # ignore all hidden files and folders
 !/.gitignore  # explicitly do not ignore .gitignore
+!/White paper - super-resolution (french)/Whitepapersuperresolution_fichiers/*.png
+
+
 
 
