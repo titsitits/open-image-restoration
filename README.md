@@ -40,7 +40,7 @@ Many thanks to the authors of these awesome contributions to image restoration r
 
 ## More information
 
-A more detailed comparison of State-of-the-art super-resolution algorithms can be found in thie **[Google Colab Notebook](https://colab.research.google.com/drive/1x7wHaiJ-_rPfRqz1DcRJ_Hbq61t6lFKi)**.
+A more detailed comparison of State-of-the-art super-resolution algorithms can be found in this **[Google Colab Notebook](https://colab.research.google.com/drive/1x7wHaiJ-_rPfRqz1DcRJ_Hbq61t6lFKi)**.
 A blog post (in french) presents an overview on the subject [here](https://titsitits.github.io/open-image-restoration/White%20paper%20-%20super-resolution%20(french)/Whitepapersuperresolution.html)
 
 ---
