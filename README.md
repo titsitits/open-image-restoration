@@ -1,7 +1,7 @@
 # A selection of State-ot-the-art, Open-source, Usable, and Pythonic techniques for Image Restoration
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/titsitits/open-image-restoration/master/Anne-Franck.png" width="600" />
+<img src="https://raw.githubusercontent.com/titsitits/open-image-restoration/master/Anne-Franck.png" width="800" />
 </p>
 
 <!--p align="center">
