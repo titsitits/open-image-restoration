@@ -1,8 +1,12 @@
 # A selection of State-ot-the-art, Open-source, Usable, and Pythonic techniques for Image Restoration
 
 <p align="center">
-<img style="height: 100%; width: 100%; object-fit: contain" src="https://github.com/titsitits/open-image-restoration/blob/master/Anne-Franck.png" />
+<img src="https://raw.githubusercontent.com/titsitits/open-image-restoration/master/Anne-Franck.png" width="600" />
 </p>
+
+<!--p align="center">
+<img style="height: 100%; width: 100%; object-fit: contain" src="https://github.com/titsitits/open-image-restoration/blob/master/Anne-Franck.png" />
+</p-->
 
 ## Description
 This project gathers together and packages various image restoration techniques that follow various criteria:
