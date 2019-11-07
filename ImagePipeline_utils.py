@@ -1,12 +1,11 @@
 import time
-from PIL import Image
 import glob
 import numpy as np
 import os, sys, shutil
 from contextlib import contextmanager
 from numba import cuda as ncuda
-from PIL import ImageFilter
-from PIL import ImageDraw, ImageFont
+import PIL
+from PIL import Image, ImageFilter, ImageDraw, ImageFont
 import cv2
 import contextlib
 
