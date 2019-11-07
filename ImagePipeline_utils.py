@@ -329,7 +329,7 @@ def save_result(result,path):
 	else:
 		imsave(path,np.clip(result,0,1))
 
-fontfile = "arial.ttf"
+fontfile = "utils/arial.ttf"
 
 def addnoise(im, sigma = 10, imagetype = 'L', add_label = False):
 	
