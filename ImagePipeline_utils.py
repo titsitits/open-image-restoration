@@ -9,6 +9,8 @@ from PIL import Image, ImageFilter, ImageDraw, ImageFont
 import cv2
 import contextlib
 
+utilspath = os.path.join(os.getcwd(), 'utils/')
+
 @contextmanager
 def timing(description: str) -> None:
   
@@ -329,7 +331,7 @@ def save_result(result,path):
 	else:
 		imsave(path,np.clip(result,0,1))
 
-fontfile = "utils/arial.ttf"
+fontfile = os.path.join(utilspath,"arial.ttf")
 
 def addnoise(im, sigma = 10, imagetype = 'L', add_label = False):
 	
