@@ -154,8 +154,6 @@ def unsplit_RGB_images(input_dir):
 			g = to_grayscale(Image.open(substring+'_green.png'))
 			b = to_grayscale(Image.open(substring+'_blue.png'))
 			
-			
-			
 			im = Image.merge('RGB', (r,g,b) )
 			
 			#save as png (and remove monochannel images)
@@ -334,9 +332,11 @@ def save_result(result,path):
 fontfile = "arial.ttf"
 
 def addnoise(im, sigma = 10, imagetype = 'L', add_label = False):
+	
 	x = np.array(im)
 	y = x + np.random.normal(0, sigma, x.shape)
 	y=np.clip(y, 0, 255)
+	
 	im = PIL.Image.fromarray(y.astype('uint8'), imagetype)
 
 	if add_label:
