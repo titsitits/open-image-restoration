@@ -8,7 +8,7 @@
 /DNCNN_ignored
 *_ignored
 ./denoiser_NLRN_DNCNN.py
-
+MyImages/
 .ipynb_checkpoints
 
 */.ipynb_checkpoints

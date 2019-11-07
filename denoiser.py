@@ -19,9 +19,19 @@ from ImagePipeline_utils import timing, suppress_stdout
 import subprocess
 import shutil
 
+#avoid GPU
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
+
 def NLRN(args):
 	
-	with tf.Session(graph=tf.Graph()) as sess:
+	config = tf.ConfigProto()
+	#config.gpu_options.per_process_gpu_memory_fraction = 0.5 # maximun alloc gpu50% of MEM
+	#config.gpu_options.allow_growth = True #allocate dynamically
+	#sess = tf.Session(config = config)
+	
+	#mysess = 
+	
+	with tf.Session(graph=tf.Graph(), config = config) as sess:
 
 		metagraph_def = tf.saved_model.loader.load(
 			sess, [tf.saved_model.tag_constants.SERVING], args.model_dir)
@@ -37,11 +47,11 @@ def NLRN(args):
 		print("NLRN Model loaded...")
 
 		with timing('Denoising - NLRN'):
-			
+
 			for input_file in os.listdir(args.input_dir):
-				
+
 				if input_file.endswith(".jpg") or input_file.endswith(".bmp") or input_file.endswith(".png"):
-				
+
 					with timing(input_file):
 
 						sha = sha256(input_file.encode('utf-8'))
@@ -87,6 +97,8 @@ def NLRN(args):
 						output_image = np.around(output_image * 255.0).astype(np.uint8)
 						output_image = Image.fromarray(output_image)
 						output_image.save(output_file)
+						
+	#tf.reset_default_graph()
 
 def download_model(args):
 	
@@ -147,3 +159,6 @@ if __name__ == '__main__':
 
 	#Uncomment this if you have issues with gpu memory release
 	#IP.reset_gpu(0)
+	
+	input("Press Enter to continue...")
+	
