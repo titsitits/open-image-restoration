@@ -57,6 +57,8 @@ class ImageRestorer:
 		
 		"""
 		preprocess images: convert them to RGB format, resize them if too large (optional, True by default), convert them to grayscale (optional, False by default)
+		Defaults options (you can override any option with a keyword argument): 
+		options = {'gray':False, 'resize':True, 'size':(1000,1000), 'quiet':True, 'raising':True}
 		"""
 		
 		#default parameters
@@ -110,6 +112,8 @@ class ImageRestorer:
 		
 		"""
 		Perform basic filtering (median, gaussian and/or mean filtering) on images
+		Defaults options (you can override any option with a keyword argument): 
+		options = {'median':True, 'median_winsize':5, 'gaussian':True, 'gaussian_x':5, 'gaussian_y':5, 'gaussian_std':0, 'mean':True, 'mean_winsize':3, 'raising':True, 'quiet':True}
 		"""
 		
 		options = {'median':True, 'median_winsize':5, 'gaussian':True, 'gaussian_x':5, 'gaussian_y':5, 'gaussian_std':0, 'mean':True, 'mean_winsize':3, 'raising':True, 'quiet':True}
@@ -154,6 +158,8 @@ class ImageRestorer:
 		
 		"""
 		Remove vertical and horizontal stripes from images
+		Defaults options (you can override any option with a keyword argument): 
+		
 		"""
 		
 		options = {'working_dir':'./WDNN', 'raising':True, 'quiet':True}
@@ -178,7 +184,12 @@ class ImageRestorer:
 	def remove_gaussian_noise(self, inputdir = None, outputdir = None, **kwargs):
 		
 		"""
-		Remove gaussian noise using NLRN
+		Remove gaussian noise using NLRN.
+		Defaults options (you can override any option with a keyword argument): 
+		options = {'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':'python', 'process_args':'', 'command_suffix':" >> log.out 2>&1"}
+		Note that we use a command suffix to export console outputs to a log file. If you remove this, you could have bugs in jupyter notebooks. It should work in standard python.
+		You can monitor log.out output by using the command "tail -f log.out" in a terminal.		
+		You can launch the process with a specific python environment by providing its path with the keyword argument "python_dir".
 		"""
 		
 		#defaults attributes to instance for method
@@ -199,7 +210,12 @@ class ImageRestorer:
 	def colorize(self, inputdir = None, outputdir = None, **kwargs):
 		
 		"""
-		Colorize images using deoldify
+		Colorize images using deoldify.
+		Defaults options (you can override any option with a keyword argument): 
+		options = {'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':'python', 'process_args':'', 'command_suffix':" >> log.out 2>&1"}
+		Note that we use a command suffix to export console outputs to a log file. If you remove this, you could have bugs in jupyter notebooks. It should work in standard python.
+		You can monitor log.out output by using the command "tail -f log.out" in a terminal.
+		You can launch the process with a specific python environment by providing its path with the keyword argument "python_dir".
 		"""
 		
 		#defaults attributes to instance for method
@@ -218,7 +234,12 @@ class ImageRestorer:
 	def super_resolution(self, inputdir = None, outputdir = None, **kwargs):
 		
 		"""
-		Upsample images using ESRGAN
+		Upsample images using ESRGAN.
+		Defaults options (you can override any option with a keyword argument): 
+		options = {'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':'python', 'process_args':'', 'command_suffix':" >> log.out 2>&1"}
+		Note that we use a command suffix to export console outputs to a log file. If you remove this, you could have bugs in jupyter notebooks. It should work in standard python.
+		You can monitor log.out output by using the command "tail -f log.out" in a terminal.
+		You can launch the process with a specific python environment by providing its path with the keyword argument "python_dir".
 		"""
 		
 		#defaults attributes to instance for method
