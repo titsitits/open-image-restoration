@@ -356,6 +356,9 @@ class StripeRemover:
 		name = []
 
 		file_list = os.listdir(test_dir)
+		#process only files
+		file_list = [f for f in file_list if os.path.isfile(f)]
+		
 		for file in file_list:
 			# read image
 			img_clean = np.array(Image.open(test_dir + file), dtype='float32') / 255.0
