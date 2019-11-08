@@ -284,7 +284,9 @@ class ImageRestorer:
 		
 		
 		self._history.append({"input":inputdir,"output":outputdir,"process":process,"options" : options})		
-
+		
+		IP.createdir_ifnotexists(outputdir)
+		
 		return inputdir, outputdir
 	
 	
@@ -354,12 +356,16 @@ class StripeRemover:
 				os.mkdir(out_dir)
 
 		name = []
-
-		file_list = os.listdir(test_dir)
-		#process only files
-		file_list = [f for f in file_list if os.path.isfile(f)]
 		
-		for file in file_list:
+		#file_list = os.listdir(test_dir)
+		#process only files
+		#file_list = [f for f in file_list if os.path.isfile(os.path.join(test_dir,f))]
+		
+		orignames = glob.glob(os.path.join(test_dir, '*'))
+		
+		for orig in orignames:
+			
+			fold,file = os.path.split(orig)
 			# read image
 			img_clean = np.array(Image.open(test_dir + file), dtype='float32') / 255.0
 			img_test = img_clean.astype('float32')
