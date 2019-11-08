@@ -4,6 +4,7 @@
 *.JPG
 *.zip
 /__pycache__
+/*/__pycache__
 /DeOldify
 /DNCNN_ignored
 *_ignored
