@@ -93,7 +93,7 @@ class ImageRestorer:
 
 						#resize only if larger than limit
 						if width > self.size[0] or height > self.size[1]:
-							im.thumbnail(size,Image.ANTIALIAS)
+							im.thumbnail(self.size,Image.ANTIALIAS)
 
 					#save as png (and remove previous version if inputdir = outputdir)
 					path, file = os.path.split(orig)
@@ -278,6 +278,7 @@ class ImageRestorer:
 		
 		#override default parameters for the process, and unpack all arguments as class attributes
 		options.update(kwargs)
+		#create/update (unpack) class attributes with options
 		for key in options: 
 			self.__setattr__(key, options[key])
 		
