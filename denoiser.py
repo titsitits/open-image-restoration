@@ -7,6 +7,7 @@ from __future__ import print_function
 import os
 import argparse
 from hashlib import sha256
+import PIL
 from PIL import Image
 import numpy as np
 import tensorflow as tf
@@ -23,6 +24,8 @@ import shutil
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
 def NLRN(args):
+	
+	tf.logging.set_verbosity(tf.logging.ERROR)
 	
 	config = tf.ConfigProto()
 	#config.gpu_options.per_process_gpu_memory_fraction = 0.5 # maximun alloc gpu50% of MEM
@@ -128,7 +131,10 @@ if __name__ == '__main__':
 	parser.add_argument( '-i', '--input-dir', help='location to load input images', required=True)
 	parser.add_argument('-o', '--output-dir', help='location to load output images', required=True)	
 	
-
+	#larger patches allow to use more context, and it allows to make an average of more individual predictions (averaging ovarlapping patches is basically ensemble learning) but need more GPU resources (and the process is slower)
+    #Larger strides (hop size between windows i suppose) make the process faster, but lead to lower quality (if stride is close to patch_size, squares appear in the processed image)
+    #actually add noise to image before process limits the oversmoothing of the algorithm, making it more real
+	
 	parser.add_argument('-n',
 		'--noise-sigma',
 		help='Input noise',
@@ -138,12 +144,12 @@ if __name__ == '__main__':
 	parser.add_argument('-p',
 		'--patch-size',
 		help='Number of pixels in height or width of patches (only for NLRN)',
-		default=35,
+		default=25,
 		type=int)
 	parser.add_argument('-s',
 		'--stride',
 		help='Overlapping between patches (only for NLRN)',
-		default=10,
+		default=12,
 		type=int)
 	parser.add_argument('-m','--model-dir', help='location to load exported model', default=os.path.join('./NLRN/models','sigma15'), type=str)
 	
@@ -160,5 +166,5 @@ if __name__ == '__main__':
 	#Uncomment this if you have issues with gpu memory release
 	#IP.reset_gpu(0)
 	
-	input("Press Enter to continue...")
+	#input("Press Enter to continue...")
 	
