@@ -50,6 +50,8 @@ https://github.com/xinntao/ESRGAN
 
 https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative
 
+<hr>
+
 Many thanks to the authors of these awesome contributions to image restoration research, and for sharing them as open-source projects. 
 
 ## More information
