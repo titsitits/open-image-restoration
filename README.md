@@ -28,8 +28,8 @@ https://github.com/Ding-Liu/NLRN
 
 https://paperswithcode.com/paper/non-local-recurrent-network-for-image
 
-### 2. Stripe noise removal
-(work in progress, for now see ImageRestorer.py and/or ImageRestorerTest.ipynb)
+### 2. Stripe noise removal <sub>(work in progress, for now see ImageRestorer.py and/or ImageRestorerTest.ipynb)</sub>
+
 WDNN - Guan et al. 2019. Wavelet Deep Neural Network for Stripe Noise Removal. IEEE Access, 7, 44544-44554
 
 https://github.com/jtguan/Wavelet-Deep-Neural-Network-for-Stripe-Noise-Removal
