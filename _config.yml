@@ -1,3 +1,4 @@
 theme: jekyll-theme-slate
 title: Mickaël Tits - Projects @ CETIC
-baseurl: https://titsitits.github.io
+baseurl: /
+home: https://titsitits.github.io
