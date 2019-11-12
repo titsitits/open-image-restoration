@@ -22,33 +22,27 @@ The project is a work in progress. However, it is already functional and **can b
 The algorithms currently included in the packages are directly replicated or slightly adapted from external github repositories (see below). These methods were selected based on the above criteria, and after a comparison with other methods (comparison colab notebooks are coming soon). 
 
 ### 1. Denoising
-NLRN - Liu et al. 2018. Non-Local Recurrent Network for Image Restoration (NeurIPS 2018) - MIT License
 
-https://github.com/Ding-Liu/NLRN
 
-https://paperswithcode.com/paper/non-local-recurrent-network-for-image
+[NLRN](https://github.com/Ding-Liu/NLRN) - Liu et al. 2018. Non-Local Recurrent Network for Image Restoration (NeurIPS 2018) - MIT License
+
+[Paperswithcode.com ranking](https://paperswithcode.com/paper/non-local-recurrent-network-for-image)
 
 ### 2. Stripe noise removal <sub>(work in progress, for now see ImageRestorer.py and/or ImageRestorerTest.ipynb)</sub>
 
-WDNN - Guan et al. 2019. Wavelet Deep Neural Network for Stripe Noise Removal. (IEEE Access, 7, 2019) - Apache-2.0 License
-
-https://github.com/jtguan/Wavelet-Deep-Neural-Network-for-Stripe-Noise-Removal
+[WDNN](https://github.com/jtguan/Wavelet-Deep-Neural-Network-for-Stripe-Noise-Removal) - Guan et al. 2019. Wavelet Deep Neural Network for Stripe Noise Removal. (IEEE Access, 7, 2019) - Apache-2.0 License
 
 (no leaderboard associated... yet).
 
 ### 3. Colorization
-DeOldify ("NoGAN" algorithm) - Jason Antic, 2019 - MIT License
-
-https://github.com/jantic/DeOldify
+[DeOldify](https://github.com/jantic/DeOldify) ("NoGAN" algorithm) - Jason Antic, 2019 - MIT License
 
 (no leaderboard associated... yet).
 
 ### 4. Super-resolution
-ESRGAN - Wang et al. 2018. ESRGAN: Enhanced super-resolution generative adversarial networks (ECCV 2018) - Apache-2.0 License
+[ESRGAN](https://github.com/xinntao/ESRGAN) - Wang et al. 2018. ESRGAN: Enhanced super-resolution generative adversarial networks (ECCV 2018) - Apache-2.0 License
 
-https://github.com/xinntao/ESRGAN
-
-https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative
+[Paperswithcode.com ranking](https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative)
 
 <hr>
 
