@@ -28,14 +28,22 @@ https://github.com/Ding-Liu/NLRN
 
 https://paperswithcode.com/paper/non-local-recurrent-network-for-image
 
-### 2. Colorization
+### 2. Stripe noise removal
+(work in progress, for now see ImageRestorer.py and/or ImageRestorerTest.ipynb)
+WDNN - Guan et al. 2019. Wavelet Deep Neural Network for Stripe Noise Removal. IEEE Access, 7, 44544-44554
+
+https://github.com/jtguan/Wavelet-Deep-Neural-Network-for-Stripe-Noise-Removal
+
+(no leaderboard associated... yet).
+
+### 3. Colorization
 DeOldify ("NoGAN" algorithm) - Jason Antic, 2019 - MIT License
 
 https://github.com/jantic/DeOldify
 
 (no leaderboard associated... yet).
 
-### 3. Super-resolution
+### 4. Super-resolution
 ESRGAN - Wang et al. 2018. ESRGAN: Enhanced super-resolution generative adversarial networks (ECCV 2018) - Apache-2.0 License
 
 https://github.com/xinntao/ESRGAN
