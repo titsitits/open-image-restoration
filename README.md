@@ -28,11 +28,29 @@ The algorithms currently included in the packages are directly replicated or sli
 
 [Paperswithcode.com ranking](https://paperswithcode.com/paper/non-local-recurrent-network-for-image)
 
+<hr>
+<p style="text-align:center;">
+<a href="https://titsitits.github.io/image_restoration/images/denoising_annefranck.png"><img src="https://titsitits.github.io/image_restoration/images/denoising_annefranck.png" style="width:100%; height:auto;"/></a>
+<br>
+Denoising methods comparison
+</p>
+<hr>
+
 ### 2. Stripe noise removal <sub>(work in progress, for now see ImageRestorer.py and/or ImageRestorerTest.ipynb)</sub>
 
 [WDNN](https://github.com/jtguan/Wavelet-Deep-Neural-Network-for-Stripe-Noise-Removal) - Guan et al. 2019. Wavelet Deep Neural Network for Stripe Noise Removal. (IEEE Access, 7, 2019) - Apache-2.0 License
 
 (no leaderboard associated... yet).
+
+The original algorithm has been adapted to allow removal of both horizontal and vertical stripes. Note that in some cases, multiple steps of this technique can provide better results (see image below).
+
+<hr>
+<p style="text-align:center;">
+<a href="https://titsitits.github.io/image_restoration/images/robaeys_stripe_removal.png"><img src="https://titsitits.github.io/image_restoration/images/robaeys_stripe_removal.png" style="width:100%; height:auto;"/></a>
+<br>
+Multiple steps of stripe removal with adapted WDNN (image credits: Jean Vandendries. Reuse of this image is prohibited).
+</p>
+<hr>
 
 ### 3. Colorization
 [DeOldify](https://github.com/jantic/DeOldify) ("NoGAN" algorithm) - Jason Antic, 2019 - MIT License
