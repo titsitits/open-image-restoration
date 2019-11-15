@@ -354,17 +354,26 @@ def addnoise(im, sigma = 10, imagetype = 'L', add_label = False):
 
 	return im
 
-def concat_images(images, labels = [], imagetype = 'L', samesize = True):
 
+utilspath = os.path.join(os.getcwd(), 'utils/')
+
+fontfile = os.path.join(utilspath,"arial.ttf")
+
+def concat_images(images, labels = [], imagetype = None, samesize = True, labelsize = 30, labelpos = (10,10), labelcolor = None):
+
+	if imagetype == None:
+
+		imagetype = im_list[0].mode
+		
 	widths, heights = zip(*(i.size for i in images))
 
 	#if images have various heights, put height to the smallest one
-	if len(set(heights)) > 1:
-		for im in images:
-			size = (im.width, min(heights))
-			im.thumbnail(size,PIL.Image.ANTIALIAS)
-		heights = [min(heights)]*len(heights)
+	if (len(set(heights)) > 1) & samesize:
+			for im in images:
+				size = (im.width, min(heights))
+				im.thumbnail(size,PIL.Image.ANTIALIAS)
 
+	widths, heights = zip(*(i.size for i in images))
 	total_width = sum(widths)
 	max_height = max(heights)
 
@@ -373,16 +382,19 @@ def concat_images(images, labels = [], imagetype = 'L', samesize = True):
 	#add labels to images
 	if len(labels) == len(images):
 
-		fnt = ImageFont.truetype(fontfile, 30)
+		fnt = ImageFont.truetype(fontfile, labelsize)
 		if imagetype == 'L':
 			fill = 240
 		elif imagetype == 'RGB':
-			fill = (255, 0, 0)
+			fill = (176,196,222)
 		elif imagetype == 'RGBA':
-			fill = (255,0,0,0)
+			fill = (176,196,222,0)
+
+		if labelcolor is not None:
+			fill = labelcolor
 
 		for i in range(len(labels)):
-			d = ImageDraw.Draw(images[i]).text((10,10), labels[i], font = fnt, fill = fill)
+			d = ImageDraw.Draw(images[i]).text(labelpos, labels[i], font = fnt, fill = fill)
 
 	x_offset = 0
 	for im in images:
@@ -391,5 +403,5 @@ def concat_images(images, labels = [], imagetype = 'L', samesize = True):
 	
 	return new_im
 
-def display_images(im_list, labels = [], imagetype = 'L', samesize = True):
-	display(concat_images(im_list, labels, imagetype))
+def display_images(im_list, labels = [], **kwargs):
+	display(concat_images(im_list, labels, **kwargs))
