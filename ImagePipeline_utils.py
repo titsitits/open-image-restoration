@@ -363,7 +363,7 @@ def concat_images(images, labels = [], imagetype = None, samesize = True, labels
 
 	if imagetype == None:
 
-		imagetype = im_list[0].mode
+		imagetype = images[0].mode
 		
 	widths, heights = zip(*(i.size for i in images))
 
