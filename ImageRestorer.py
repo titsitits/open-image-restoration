@@ -113,10 +113,10 @@ class ImageRestorer:
 		"""
 		Perform basic filtering (median, gaussian and/or mean filtering) on images
 		Defaults options (you can override any option with a keyword argument): 
-		options = {'median':True, 'median_winsize':5, 'gaussian':True, 'gaussian_x':5, 'gaussian_y':5, 'gaussian_std':0, 'mean':True, 'mean_winsize':3, 'raising':True, 'quiet':True}
+		options = {'median':True, 'median_winsize':5, 'gaussian':True, 'gaussian_x':5, 'gaussian_y':5, 'gaussian_std':1, 'mean':True, 'mean_winsize':3, 'raising':True, 'quiet':True}
 		"""
 		
-		options = {'median':True, 'median_winsize':5, 'gaussian':True, 'gaussian_x':5, 'gaussian_y':5, 'gaussian_std':0, 'mean':True, 'mean_winsize':3, 'raising':True, 'quiet':True}
+		options = {'median':True, 'median_winsize':5, 'gaussian':True, 'gaussian_x':5, 'gaussian_y':5, 'gaussian_std':1, 'mean':True, 'mean_winsize':3, 'raising':True, 'quiet':True}
 		
 		inputdir, outputdir = self._init_process(inputdir, outputdir, "filter", options, **kwargs)
 		
