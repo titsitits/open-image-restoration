@@ -8,6 +8,7 @@ import PIL
 from PIL import Image, ImageFilter, ImageDraw, ImageFont
 import cv2
 import contextlib
+from copy import deepcopy
 
 utilspath = os.path.join(os.getcwd(), 'utils/')
 
@@ -359,8 +360,9 @@ utilspath = os.path.join(os.getcwd(), 'utils/')
 
 fontfile = os.path.join(utilspath,"arial.ttf")
 
-def concat_images(images, labels = [], imagetype = None, samesize = True, labelsize = 30, labelpos = (10,10), labelcolor = None):
+def concat_images(img_list, labels = [], imagetype = None, samesize = True, labelsize = 30, labelpos = (10,10), labelcolor = None):
 
+	images = deepcopy(img_list)
 	if imagetype == None:
 
 		imagetype = images[0].mode
@@ -405,3 +407,19 @@ def concat_images(images, labels = [], imagetype = None, samesize = True, labels
 
 def display_images(im_list, labels = [], **kwargs):
 	display(concat_images(im_list, labels, **kwargs))
+
+def get_filepaths(directory):
+	files = [os.path.join(directory, file) for file in os.listdir(directory) if os.path.isfile(os.path.join(directory, file))]
+	return files
+
+def get_filenames(directory):
+	files = [file for file in os.listdir(directory) if os.path.isfile(os.path.join(directory, file))]
+	return files
+
+def display_folder(directory, limit = 10):
+	
+	files = get_filepaths(directory)
+	if len(files) > limit:
+		files = files[:limit]
+	
+	display_images([PIL.Image.open(f) for f in files], [os.path.split(f)[1] for f in files])
