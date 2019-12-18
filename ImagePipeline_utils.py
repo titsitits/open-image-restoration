@@ -9,6 +9,7 @@ from PIL import Image, ImageFilter, ImageDraw, ImageFont
 import cv2
 import contextlib
 from copy import deepcopy
+import subprocess
 
 utilspath = os.path.join(os.getcwd(), 'utils/')
 
@@ -41,7 +42,7 @@ def suppress_stdout(raising = False):
 			finished = True
 			sys.stdout = old_stdout
 			
-	sys.stdout = old_stdout         
+	sys.stdout = old_stdout		 
 	if error_raised:
 		if raising:
 			raise(error)
@@ -110,7 +111,7 @@ def initdir(directory):
 def to_RGB(image):
 	return image.convert('RGB')
 
-def to_grayscale(image):    
+def to_grayscale(image):	
 	return image.convert('L')
 
 def split_RGB_images(input_dir):
@@ -121,7 +122,7 @@ def split_RGB_images(input_dir):
 	for orig in orignames:
 		
 		try:
-			im = Image.open(orig)            
+			im = Image.open(orig)			
 
 			#remove alpha component
 			im = to_RGB(im)
@@ -142,7 +143,7 @@ def split_RGB_images(input_dir):
 			b.save(f+"_blue.png")
 			
 		except Exception as e:
-			print(e)    
+			print(e)	
 
 def unsplit_RGB_images(input_dir):
 	
@@ -167,7 +168,7 @@ def unsplit_RGB_images(input_dir):
 			im.save(substring+".png")
 			
 		except Exception as e:
-			print(e)            
+			print(e)			
 			
 	
 			
@@ -222,7 +223,7 @@ def filtering(input_dir, median = True, median_winsize = 5, mean = True, mean_wi
 					
 				#mean blur
 				if mean:
-					im = im.filter(ImageFilter.Meanfilter(mean_winsize))                 
+					im = im.filter(ImageFilter.Meanfilter(mean_winsize))				 
 
 				#save as png (and remove previous version)
 				f, e = os.path.splitext(orig)
@@ -245,7 +246,7 @@ def filtering_opencv(input_dir, median = True, median_winsize = 5, gaussian = Tr
 
 				#median blur
 				if median:
-					im = cv2.medianBlur(im,median_winsize)     
+					im = cv2.medianBlur(im,median_winsize)	 
 					
 				if gaussian:
 					im = cv2.GaussianBlur(im,(gaussian_x,gaussian_y),gaussian_std)
@@ -423,3 +424,43 @@ def display_folder(directory, limit = 10):
 		files = files[:limit]
 	
 	display_images([PIL.Image.open(f) for f in files], [os.path.split(f)[1] for f in files])
+	
+def clone_git(url, dir_name = None, tag = None, reclone = False):
+
+	"""	
+	url: url of the git repository to clone
+	dir_name: name of the folder to give to the repository. If not given, the git repository name is used
+	tag: allows to checkout a specific commit if given
+	reclone: overwrite existing repo
+	"""
+	
+	old_dir = os.getcwd()
+	
+	if dir_name is None:		
+		dir_name = os.path.split(url)[1] #use git repo name
+		dir_name = os.path.splitext(dir_name)[0] #remove ".git" if present
+	
+	if reclone and os.path.exists(dir_name):
+		shutil.rmtree(dir_name)
+		
+	if not os.path.exists(dir_name):
+		command = "git clone %s %s" % (url, dir_name)
+		subprocess.run(command, shell = True)
+		
+	os.chdir(dir_name)
+	
+	if tag is not None:
+		command = "git checkout %s" % tag
+		subprocess.run(command, shell = True)
+	
+	git_path = os.path.join(os.getcwd())
+	
+	os.chdir(old_dir)
+	
+	return git_path
+
+def download_gdrive(file_id):
+	
+	subprocess.run("wget https://raw.githubusercontent.com/GitHub30/gdrive.sh/master/gdrive.sh", shell = True)
+	subprocess.run("curl gdrive.sh | bash -s %s" % file_id, shell = True)
+	subprocess.run("rm gdrive.sh", shell = True)
