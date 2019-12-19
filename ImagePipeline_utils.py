@@ -361,20 +361,40 @@ utilspath = os.path.join(os.getcwd(), 'utils/')
 
 fontfile = os.path.join(utilspath,"arial.ttf")
 
-def concat_images(img_list, labels = [], imagetype = None, samesize = True, labelsize = 30, labelpos = (10,10), labelcolor = None):
+def concat_images(img_list, labels = [], imagetype = None, sameheight = True, imagewidth = None, imageheight = None, labelsize = 30, labelpos = (10,10), labelcolor = None):
 
+	"""
+	imagetype: allow to convert all images to a PIL.Image.mode (L = grayscale, RGB, RGBA, ...)
+	sameheight: put all images to same height (size of smallest image of the list, or imageheight if not None)
+	imageheight: if not None, force all images to have this height (keep aspect ratio). Force sameheight to True
+	imagewidth: if not None, force all images to have this width (keep aspect ratio if sameheight=False and imageheight=None)
+	"""
 	images = deepcopy(img_list)
+	
 	if imagetype == None:
-
 		imagetype = images[0].mode
+	
+	#force all image to imageheight (keep aspect ratio)
+	if imageheight is not None:
+		sameheight = True
 		
 	widths, heights = zip(*(i.size for i in images))
+	
+	#resize needed ?
+	if ( (len(set(heights)) > 1) & sameheight ) or (imageheight is not None) or (imagewidth is not None):
+		
+		if imageheight is None:
+			imageheight = min(heights)
 
-	#if images have various heights, put height to the smallest one
-	if (len(set(heights)) > 1) & samesize:
-			for im in images:
-				size = (im.width, min(heights))
-				im.thumbnail(size,PIL.Image.ANTIALIAS)
+		#force all images to same width
+		if imagewidth is not None:
+			if sameheight: #force width and height
+				images = [im.resize( (int(imagewidth),int(imageheight)),PIL.Image.ANTIALIAS ) for im in images]
+			else: #force width (keep aspect ratio)
+				images = [im.resize( (int(imagewidth),int(im.height)),PIL.Image.ANTIALIAS ) for im in images]
+		else: #force height (keep aspect ratio)
+			images = [im.resize( (int(im.width*imageheight/im.height), imageheight) ,PIL.Image.ANTIALIAS) for im in images]
+			
 
 	widths, heights = zip(*(i.size for i in images))
 	total_width = sum(widths)
@@ -417,13 +437,13 @@ def get_filenames(directory):
 	files = [file for file in os.listdir(directory) if os.path.isfile(os.path.join(directory, file))]
 	return files
 
-def display_folder(directory, limit = 10):
+def display_folder(directory, limit = 10, **kwargs):
 	
 	files = get_filepaths(directory)
 	if len(files) > limit:
 		files = files[:limit]
 	
-	display_images([PIL.Image.open(f) for f in files], [os.path.split(f)[1] for f in files])
+	display_images([PIL.Image.open(f) for f in files], [os.path.split(f)[1] for f in files], **kwargs)
 	
 def clone_git(url, dir_name = None, tag = None, reclone = False):
 

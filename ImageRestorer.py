@@ -159,7 +159,7 @@ class ImageRestorer:
 		"""
 		Remove vertical and horizontal stripes from images
 		Defaults options (you can override any option with a keyword argument): 
-		
+		options = {'working_dir':'./WDNN', 'raising':True, 'quiet':True}
 		"""
 		
 		options = {'working_dir':'./WDNN', 'raising':True, 'quiet':True}
@@ -199,7 +199,10 @@ class ImageRestorer:
 		inputdir, outputdir = self._init_process(inputdir, outputdir, "remove_gaussian_noise", options, **kwargs)
 		
 		tf.logging.set_verbosity(tf.logging.ERROR)
-
+		
+		if self.process_args[0] != ' ':
+			self.process_args = ' ' + self.process_args
+			
 		command = self.python_dir + ' -u denoiser.py -i ' + inputdir + ' -o ' + outputdir + self.process_args + self.command_suffix
 		#print("raising", self.raising)
 		with IP.quiet_and_timeit("Removing gaussian noise", self.raising, self.quiet):
@@ -223,7 +226,10 @@ class ImageRestorer:
 		inputdir, outputdir = self._init_process(inputdir, outputdir, "colorize", options, **kwargs)		
 		
 		tf.logging.set_verbosity(tf.logging.ERROR)
-
+		
+		if self.process_args[0] != ' ':
+			self.process_args = ' ' + self.process_args
+		
 		command = self.python_dir + ' -u colorizer.py -i ' + inputdir + ' -o ' + outputdir + self.process_args + self.command_suffix
 		#print("raising", self.raising)
 		with IP.quiet_and_timeit("Colorizing", self.raising, self.quiet):
