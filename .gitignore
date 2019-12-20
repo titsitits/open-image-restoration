@@ -1,3 +1,9 @@
+fasterai/*
+fasterai
+fasterai/
+./fasterai/
+./fasterai/*
+/fasterai
 *.jpg
 *.png
 *.PNG
@@ -13,11 +19,11 @@ MyImages/
 
 */.ipynb_checkpoints
 denoiser_NLRN_DNCNN.py
-
+log.err
+log.out
 .*  # ignore all hidden files and folders
+
 !/.gitignore  # explicitly do not ignore .gitignore
 !/White paper - super-resolution (french)/Whitepapersuperresolution_fichiers/*.png
-
-
 
 
