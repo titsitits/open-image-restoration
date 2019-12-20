@@ -10,7 +10,7 @@ import argparse
 from PIL import Image
 import time
 import ImagePipeline_utils as IP
-from ImagePipeline_utils import timing, suppress_stdout
+from ImagePipeline_utils import timing
 import subprocess
 import shutil
 

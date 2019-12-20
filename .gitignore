@@ -1,9 +1,12 @@
+*.pyc
 fasterai/*
 fasterai
 fasterai/
 ./fasterai/
 ./fasterai/*
 /fasterai
+*fasterai
+*/fasterai
 *.jpg
 *.png
 *.PNG

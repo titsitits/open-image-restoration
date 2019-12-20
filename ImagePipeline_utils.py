@@ -1,5 +1,4 @@
 import time
-import glob
 import numpy as np
 import os, sys, shutil
 from contextlib import contextmanager
@@ -10,7 +9,10 @@ import cv2
 import contextlib
 from copy import deepcopy
 import subprocess
-
+from glob import glob
+from os import path as osp
+from os import path
+	
 utilspath = os.path.join(os.getcwd(), 'utils/')
 
 @contextmanager
@@ -23,80 +25,96 @@ def timing(description: str) -> None:
 
 	print( description + ': finished in ' + f"{elapsed_time:.4f}" + ' s' )
 
-@contextmanager
-def suppress_stdout(raising = False):
-	
-	with open(os.devnull, "w") as devnull:
-		error_raised = False
-		error = "there was an error"
-		old_stdout = sys.stdout
-		sys.stdout = devnull
-		try:  
-			yield
-		except Exception as e:
-			error_raised = True  
-			error = e
-			sys.stdout = old_stdout
-			print(e)
-		finally:
-			finished = True
-			sys.stdout = old_stdout
-			
-	sys.stdout = old_stdout		 
-	if error_raised:
-		if raising:
-			raise(error)
-		else:
-			print(error)
-			
-global old_stdout
-old_stdout = sys.stdout
 
-#Mute stdout inside this context
-@contextmanager
-def quiet_and_timeit(description = "Process running", raising = False, quiet = True):
+class Quiet:
 	
-	global old_stdout
-	old_stdout = sys.stdout
-	print(description+"...", end = '')
-	start = time.time()
-	try:
+	def __init__(self):
 		
-		if quiet:
-			#with suppress_stdout(raising):	
-			sys.stdout = open(os.devnull, "w")
-		yield
-		if quiet:
-			sys.stdout.close()
-			sys.stdout = old_stdout
-	except Exception as e:
-		if quiet:
-			sys.stdout.close()
-			sys.stdout = old_stdout
-		if raising:
-			raise(e)
-		else:
-			print(e)
-			
-	elapsed_time = time.time() - start
-	print(': finished in ' + f"{elapsed_time:.4f}" + ' s' )
+		#Store initial stdout in this variable
+		self._stdout = sys.stdout
+		
+	def __del__(self):
+		
+		sys.stdout = self._stdout
 
-#Force printing in stdout, regardless of the context (such as the one defined above)	
-def force_print(value):
-	prev_stdout = sys.stdout
-	global old_stdout
-	sys.stdout = old_stdout
-	print(value)
-	sys.stdout = prev_stdout
+	@contextmanager
+	def suppress_stdout(self, raising = False):
+
+		with open(os.devnull, "w") as devnull:
+			error_raised = False
+			error = "there was an error"
+			sys.stdout = devnull
+			try:  
+				yield
+			except Exception as e:
+				error_raised = True  
+				error = e
+				sys.stdout = self._stdout
+				print(e)
+			finally:
+				finished = True
+				sys.stdout = self._stdout
+
+		sys.stdout = self._stdout		 
+		if error_raised:
+			if raising:
+				raise(error)
+			else:
+				print(error)
+
+
+	#Mute stdout inside this context
+	@contextmanager
+	def quiet_and_timeit(self, description = "Process running", raising = False, quiet = True):
+
+		print(description+"...", end = '')
+		start = time.time()
+		try:
+
+			if quiet:
+				#with suppress_stdout(raising):	
+				sys.stdout = open(os.devnull, "w")
+			yield
+			if quiet:
+				sys.stdout = self._stdout
+		except Exception as e:
+			if quiet:
+				sys.stdout = self._stdout
+			if raising:
+				sys.stdout = self._stdout
+				raise(e)
+			else:
+				sys.stdout = self._stdout
+				print(e)
+
+		elapsed_time = time.time() - start
+		
+		sys.stdout = self._stdout
+		print(': finished in ' + f"{elapsed_time:.4f}" + ' s' )
+		
+		
+
+	#Force printing in stdout, regardless of the context (such as the one defined above)	
+	def force_print(self, value):
+		prev_stdout = sys.stdout
+		sys.stdout = self._stdout
+		print(value)
+		sys.stdout = prev_stdout
 
 
 
 def duplicatedir(src,dst):
-
-	if os.path.exists(dst):
-		shutil.rmtree(dst)
+	
+	if not os.path.exists(src):
+		print('ImagePipeline_utils. duplicatedir: Source directory does not exists!')
+		return
+	
+	if src != dst:
 		
-	shutil.copytree(src=src,dst=dst) 
+		if os.path.exists(dst):
+			shutil.rmtree(dst)
+
+		shutil.copytree(src=src,dst=dst) 
 
 def createdir_ifnotexists(directory):
 	#create directory, recursively if needed, and do nothing if directory already exists
@@ -117,7 +135,7 @@ def to_grayscale(image):
 def split_RGB_images(input_dir):
 	
 	imname = '*'
-	orignames = glob.glob(os.path.join(input_dir, imname))
+	orignames = glob(os.path.join(input_dir, imname))
 	
 	for orig in orignames:
 		
@@ -148,7 +166,7 @@ def split_RGB_images(input_dir):
 def unsplit_RGB_images(input_dir):
 	
 	imname = '*_red.png'
-	orignames = glob.glob(os.path.join(input_dir, imname))
+	orignames = glob(os.path.join(input_dir, imname))
 	
 	for orig in orignames:
 		
@@ -175,7 +193,7 @@ def unsplit_RGB_images(input_dir):
 def preprocess(input_dir, gray = True, resize = True, size = (1000,1000)):
 
 	imname = '*'
-	orignames = glob.glob(os.path.join(input_dir, imname))
+	orignames = glob(os.path.join(input_dir, imname))
 	
 	for orig in orignames:
 		
@@ -209,7 +227,7 @@ def filtering(input_dir, median = True, median_winsize = 5, mean = True, mean_wi
 
 	with timing("Filtering (median) with PIL (consider using filtering_opencv for faster processing)"):
 		imname = '*'
-		orignames = glob.glob(os.path.join(input_dir, imname))
+		orignames = glob(os.path.join(input_dir, imname))
 
 		for orig in orignames:
 
@@ -236,7 +254,7 @@ def filtering_opencv(input_dir, median = True, median_winsize = 5, gaussian = Tr
 
 	with timing("Filtering (median) with opencv"):
 		imname = '*'
-		orignames = glob.glob(os.path.join(input_dir, imname))
+		orignames = glob(os.path.join(input_dir, imname))
 
 		for orig in orignames:
 			print(orig)
@@ -268,7 +286,7 @@ def filtering_opencv(input_dir, median = True, median_winsize = 5, gaussian = Tr
 def rotate_images(input_dir):
 
 	imname = '*'
-	orignames = glob.glob(os.path.join(input_dir, imname))
+	orignames = glob(os.path.join(input_dir, imname))
 	
 	for orig in orignames:
 		
@@ -288,7 +306,7 @@ def rotate_images(input_dir):
 def unrotate_images(input_dir):
 
 	imname = '*'
-	orignames = glob.glob(os.path.join(input_dir, imname))
+	orignames = glob(os.path.join(input_dir, imname))
 	
 	for orig in orignames:
 		
@@ -372,7 +390,9 @@ def concat_images(img_list, labels = [], imagetype = None, sameheight = True, im
 	images = deepcopy(img_list)
 	
 	if imagetype == None:
-		imagetype = images[0].mode
+		imagetype = 'RGB'
+	
+	images = [im.convert(imagetype) for im in images]
 	
 	#force all image to imageheight (keep aspect ratio)
 	if imageheight is not None:
@@ -444,7 +464,26 @@ def display_folder(directory, limit = 10, **kwargs):
 		files = files[:limit]
 	
 	display_images([PIL.Image.open(f) for f in files], [os.path.split(f)[1] for f in files], **kwargs)
+
+def compare_folders(dirs, labels = [], **kwargs):
+
+	if type(dirs) is list:
+		#dirs is a list of folders containings processed images to compare
+		dirlist = dirs
+		
+	elif type(dirs) is str:
+		#dirs if parent folder of subfolders containings processed images to compare
+		dirlist = glob(os.path.join(dirs,'*'))
+		dirlist = [d for d in dirlist if os.path.isdir(d)]
+
+	first_dir = dirlist[0]
+	names = get_filenames(first_dir)
 	
+	for n in names:
+		paths = [glob(os.path.join(d,osp.splitext(n)[0]+'*'))[0] for d in dirlist]
+		display_images([PIL.Image.open(p) for p in paths], [os.path.split(d)[1] for d in dirlist], **kwargs)
+
+
 def clone_git(url, dir_name = None, tag = None, reclone = False):
 
 	"""	
@@ -484,3 +523,29 @@ def download_gdrive(file_id):
 	subprocess.run("wget https://raw.githubusercontent.com/GitHub30/gdrive.sh/master/gdrive.sh", shell = True)
 	subprocess.run("curl gdrive.sh | bash -s %s" % file_id, shell = True)
 	subprocess.run("rm gdrive.sh", shell = True)
+	
+def image_average(imlist, weights):
+	
+	assert len(imlist)==len(weights), "Input lists should have same size."
+	weights = np.array(weights)
+	weights = weights/np.sum(weights)
+	
+	# Assuming all images are the same size, get dimensions of first image
+	w,h=Image.open(imlist[0]).convert("RGB").size
+	N=len(imlist)
+
+	# Create a numpy array of floats to store the average (assume RGB images)
+	arr=np.zeros((h,w,3),np.float)
+
+	# Build up average pixel intensities, casting each image as an array of floats
+	for im in imlist:
+		imarr=np.array(Image.open(im),dtype=np.float)
+		arr=arr+imarr/N
+
+	# Round values in array and cast as 8-bit integer
+	arr=np.array(np.round(arr),dtype=np.uint8)
+
+	# Generate, save and preview final image
+	out=Image.fromarray(arr,mode="RGB")
+	
+	return out

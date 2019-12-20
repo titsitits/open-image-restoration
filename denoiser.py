@@ -4,6 +4,13 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+#reduce tensorflow verbosity
+import os, logging
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+logging.getLogger("tensorflow").setLevel(logging.CRITICAL)
+logging.getLogger("tensorflow_hub").setLevel(logging.CRITICAL)
+
+
 import os
 import argparse
 from hashlib import sha256
@@ -16,12 +23,12 @@ from contextlib import contextmanager
 import time
 import ImagePipeline_utils as IP
 #import glob
-from ImagePipeline_utils import timing, suppress_stdout
+from ImagePipeline_utils import timing
 import subprocess
 import shutil
-
-#avoid GPU
-os.environ['CUDA_VISIBLE_DEVICES'] = ''
+from keras.models import load_model, model_from_json  
+from skimage.io import imread, imsave
+import glob
 
 def NLRN(args):
 	
@@ -63,7 +70,8 @@ def NLRN(args):
 
 						output_file = os.path.join(args.output_dir, input_file)
 						input_file = os.path.join(args.input_dir, input_file)
-						input_image = np.asarray(Image.open(input_file))
+						#force conversion to grayscale (one-channel image)
+						input_image = np.asarray(IP.to_grayscale(Image.open(input_file)))
 						input_image = input_image.astype(np.float32) / 255.0
 
 						def forward_images(images):
@@ -122,25 +130,84 @@ def download_model(args):
 	shutil.move('sigma15', args.model_dir)
 	
 	os.remove('sigma15_12states.zip')
+
+"""
+def DNCNN(args):
 	
+	#This repo is not licensed, so you can use it only for personal use	
+	repodir = IP.clone_git('https://github.com/cszn/DnCNN')
+		
+	# load json and create model
+	json_file = open(os.path.join(args.model_dir,'model.json'), 'r')
+	loaded_model_json = json_file.read()
+	json_file.close()
+	dncnn = model_from_json(loaded_model_json)
+	# load weights into new model
+	dncnn.load_weights(os.path.join(args.model_dir,'model.h5'))
+	
+	print('DNCNN model loaded...')
+	
+	#Run model
+	with timing('Denoising - DNCNN'):
+			
+		for im in os.listdir(args.input_dir): 
+			if im.endswith(".jpg") or im.endswith(".bmp") or im.endswith(".png"):
 				
+				output_file = os.path.join(args.output_dir, im)
+				#x = np.array(Image.open(os.path.join(args.set_dir,set_cur,im)), dtype='float32') / 255.0
+				x = np.array(imread(os.path.join(args.input_dir,im)), dtype=np.float32) / 255.0
+				np.random.seed(seed=0) # for reproducibility
+				y = x + np.random.normal(0, args.noise_sigma/255.0, x.shape) # Add Gaussian noise without clipping
+				y = y.astype(np.float32)
+				y_	= IP.to_tensor(y)
+				with timing(im):
+					x_ = dncnn.predict(y_) # inference
+				output_image= IP.from_tensor(x_)
+				output_image = np.around(output_image * 255.0).astype(np.uint8)
+				output_image = Image.fromarray(output_image)
+				output_image.save(output_file)
+"""
+
 if __name__ == '__main__':	
 	
 	parser = argparse.ArgumentParser()
-
+	#parser.add_argument('--method', help='DNCNN or NLRN', default='NLRN', type=str)	
 	parser.add_argument( '-i', '--input-dir', help='location to load input images', required=True)
 	parser.add_argument('-o', '--output-dir', help='location to load output images', required=True)	
+
+
 	
 	#larger patches allow to use more context, and it allows to make an average of more individual predictions (averaging ovarlapping patches is basically ensemble learning) but need more GPU resources (and the process is slower)
     #Larger strides (hop size between windows i suppose) make the process faster, but lead to lower quality (if stride is close to patch_size, squares appear in the processed image)
     #actually add noise to image before process limits the oversmoothing of the algorithm, making it more real
 	
-	parser.add_argument('-n',
+	"""
+	#First check method
+	try:
+		args = parser.parse_args()
+	except NameError:
+		pass
+		
+	#different default noise-sigma parameter for each method
+	if args.method == 'DNCNN': 
+		
+		parser.add_argument('-n',
+			'--noise-sigma',
+			help='Input noise',
+			default=25,
+			type=float)		
+		parser.add_argument(
+			'--model-dir', help='location to load exported model', default='./DnCNN/TrainingCodes/dncnn_keras/models/DnCNN_sigma25', type=str)
+
+	else: #(NLRN parameters)
+	"""
+	parser.add_argument("-n",
 		'--noise-sigma',
 		help='Input noise',
 		default=15,
 		type=float)
-
+	
+	#NLRN parameters
 	parser.add_argument('-p',
 		'--patch-size',
 		help='Number of pixels in height or width of patches (only for NLRN)',
@@ -153,6 +220,7 @@ if __name__ == '__main__':
 		type=int)
 	parser.add_argument('-m','--model-dir', help='location to load exported model', default=os.path.join('./NLRN/models','sigma15'), type=str)
 	
+	
 	args = parser.parse_args()
 	
 	#Verify if model is present, otherwise download it:
@@ -160,8 +228,18 @@ if __name__ == '__main__':
 		print("Model files missing, let's download them...")
 		download_model(args)
 
-	
-	NLRN(args)
+	try:
+		#avoid GPU or not ? (put empty str to avoid gpu)
+		os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+		NLRN(args)
+	except Exception as e:
+		sys.stderr.write(e)
+		sys.stderr.write("Process failed on GPU. Trying on CPU...")
+		IP.reset_gpu(0)
+		os.environ['CUDA_VISIBLE_DEVICES'] = ''
+		NLRN(args)
+		
+		
 
 	#Uncomment this if you have issues with gpu memory release
 	#IP.reset_gpu(0)

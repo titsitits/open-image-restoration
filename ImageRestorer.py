@@ -1,6 +1,6 @@
 import time
 from PIL import Image
-import glob
+from glob import glob
 import numpy as np
 import os, sys
 from contextlib import contextmanager
@@ -11,47 +11,25 @@ import cv2
 fast_denoising = False
 import time
 import ImagePipeline_utils as IP
+from ImagePipeline_utils import Quiet
 import os, shutil
 import warnings
-
+from os import path as osp
 import subprocess
 from contextlib import contextmanager
 import time, sys
 
 
-#imports needed for stripe removal (see below)
-from keras import backend as K
-import tensorflow as tf
-import os, time, glob
-import PIL.Image as Image
-import numpy as np
-import pandas as pd
-import keras
-from keras.callbacks import CSVLogger, ModelCheckpoint, LearningRateScheduler
-from keras.models import load_model
-from keras.optimizers import Adam,SGD
-from skimage.measure import compare_psnr, compare_ssim
-from keras.utils import multi_gpu_model
-from keras.models import Model
-from keras.layers import  Input,Conv2D,BatchNormalization,Activation,Subtract,Multiply,Add,Concatenate
-from keras import regularizers
-from keras.utils import plot_model
-from keras import initializers
-from keras.layers.pooling import MaxPooling2D
-from keras.layers.convolutional import UpSampling2D
-from pywt import dwt2,idwt2 
-import pywt
-import scipy.io as sio
-
-
 class ImageRestorer:
 
-	def __init__(self):
+	def __init__(self, resetgpu = True):
 		
 		self._history = []
+		self._resetgpu = resetgpu
 		#record current interpreter path (to ensure calling the right interpreter when calling another process)
 		self._python_dir = sys.executable
-		
+		self.denoise = self.remove_gaussian_noise
+		self.Q = Quiet()
 		
 	def preprocess(self, inputdir = None, outputdir = None, **kwargs):
 		
@@ -66,9 +44,9 @@ class ImageRestorer:
 		#default parameters are overriden by keywords arguments (e.g. gray = True) (passed by **kwargs) and are unpacked as class attributes (self.gray = True, ...)
 		inputdir, outputdir = self._init_process(inputdir, outputdir, "preprocess", options, **kwargs)		
 		
-		with IP.quiet_and_timeit("Image preprocessing", raising = self.raising, quiet = self.quiet):
+		with self.Q.quiet_and_timeit("Image preprocessing", raising = self.raising, quiet = self.quiet):
 			imname = '*'
-			orignames = glob.glob(os.path.join(inputdir, imname))
+			orignames = glob(os.path.join(inputdir, imname))
 
 			for orig in orignames:
 
@@ -105,7 +83,7 @@ class ImageRestorer:
 					print(output_name)
 					
 				except Exception as e:
-					IP.force_print(e)
+					self.Q.force_print(e)
 
 					
 	def filter(self, inputdir = None, outputdir = None, **kwargs):		
@@ -120,9 +98,9 @@ class ImageRestorer:
 		
 		inputdir, outputdir = self._init_process(inputdir, outputdir, "filter", options, **kwargs)
 		
-		with IP.quiet_and_timeit("Image filtering", self.raising, self.quiet):
+		with self.Q.quiet_and_timeit("Image filtering", self.raising, self.quiet):
 			imname = '*'
-			orignames = glob.glob(os.path.join(inputdir, imname))
+			orignames = glob(os.path.join(inputdir, imname))
 
 			for orig in orignames:
 				print(orig)
@@ -151,7 +129,7 @@ class ImageRestorer:
 					print(output_name)
 					
 				except Exception as e:
-					IP.force_print(e)
+					self.Q.force_print(e)
 
 					
 	def remove_stripes(self, inputdir = None, outputdir = None, **kwargs):
@@ -159,107 +137,158 @@ class ImageRestorer:
 		"""
 		Remove vertical and horizontal stripes from images
 		Defaults options (you can override any option with a keyword argument): 
-		options = {'working_dir':'./WDNN', 'raising':True, 'quiet':True}
+		options = {'working_dir':'./WDNN', 'raising':True, 'quiet':True, 'python_dir':sys.executable, 'process_args':'', 'command_suffix':" 2> log.err 1>> log.out"}
 		"""
 		
-		options = {'working_dir':'./WDNN', 'raising':True, 'quiet':True}
-		inputdir, outputdir = self._init_process(inputdir, outputdir, "remove_stripes", options, **kwargs)
-
-		stripe_remover = StripeRemover(self.working_dir)
+		options = {'working_dir':'./WDNN', 'raising':True, 'quiet':True, 'python_dir':sys.executable, 'process_args':'', 'command_suffix':" 2> log.err 1>> log.out"}
 		
-		tf.logging.set_verbosity(tf.logging.ERROR)
+		inputdir, outputdir = self._init_process(inputdir, outputdir, "remove_stripes", options, **kwargs)
+		
+		command = "%s -W ignore -u striperemover.py -i %s -o %s %s %s" % (self.python_dir, inputdir, outputdir, self.process_args, self.command_suffix)	
 		
 		#Remove vertical stripes
-		with IP.quiet_and_timeit("Removing vertical stripes", self.raising, self.quiet):
-			stripe_remover.stripes_removal(inputdir, outputdir)
-		#Rotate images
-		IP.rotate_images(outputdir)
-		#Remove horizontal stripes
-		with IP.quiet_and_timeit("Removing horizontal stripes", self.raising, self.quiet):
-			stripe_remover.stripes_removal(outputdir, outputdir)
-		#Unrotate images
-		IP.unrotate_images(outputdir)
+		with self.Q.quiet_and_timeit("Removing stripes", self.raising, self.quiet):
+			IP.createdir_ifnotexists(outputdir)
+			subprocess.run(command, shell = True)
+			
+		if self.raising:
+			self.logerr()		
+						
+		if not self.quiet:
+			for l in self.log():
+				print(l)			
+
 		
-	
+		
 	def remove_gaussian_noise(self, inputdir = None, outputdir = None, **kwargs):
 		
 		"""
-		Remove gaussian noise using NLRN.
+		Remove gaussian noise using NLRN (or DNCNN if fast is True).
 		Defaults options (you can override any option with a keyword argument): 
-		options = {'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':'python', 'process_args':'', 'command_suffix':" >> log.out 2>&1"}
+		options = {'fast':False, 'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':sys.executable, 'process_args':'', 'command_suffix':" 2> log.err 1>> log.out"}
 		Note that we use a command suffix to export console outputs to a log file. If you remove this, you could have bugs in jupyter notebooks. It should work in standard python.
 		You can monitor log.out output by using the command "tail -f log.out" in a terminal.		
 		You can launch the process with a specific python environment by providing its path with the keyword argument "python_dir".
 		"""
 		
 		#defaults attributes to instance for method
-		options = {'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':'python', 'process_args':'', 'command_suffix':" >> log.out 2>&1"}
+		options = {'fast':False, 'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':sys.executable, 'process_args':'', 'command_suffix':" 2> log.err 1>> log.out"}
 		#Note that we use a command suffix to export console outputs to a log file. If you remove this, you could have bugs in jupyter notebooks. It should work in standard python
 		
 		inputdir, outputdir = self._init_process(inputdir, outputdir, "remove_gaussian_noise", options, **kwargs)
 		
-		tf.logging.set_verbosity(tf.logging.ERROR)
+		command = "%s -W ignore -u denoiser.py -i %s -o %s %s %s" % (self.python_dir, inputdir, outputdir, self.process_args, self.command_suffix)
+
+		if self.fast:
+			#IP.reset_gpu(0)
+			command = '%s -W ignore -u denoiser_NLRN_DNCNN.py -i %s -o %s --method DNCNN %s %s' % (self.python_dir, inputdir, outputdir, self.process_args, self.command_suffix)
 		
-		if self.process_args[0] != ' ':
-			self.process_args = ' ' + self.process_args
-			
-		command = self.python_dir + ' -u denoiser.py -i ' + inputdir + ' -o ' + outputdir + self.process_args + self.command_suffix
 		#print("raising", self.raising)
-		with IP.quiet_and_timeit("Removing gaussian noise", self.raising, self.quiet):
+		with self.Q.quiet_and_timeit("Removing gaussian noise", self.raising, self.quiet):
 			IP.createdir_ifnotexists(outputdir)
 			subprocess.run(command, shell = True)
-
+			
+		if self.raising:
+			self.logerr()		
+						
+		if not self.quiet:
+			for l in self.log():
+				print(l)
 		
+		#if self.fast:
+			#IP.reset_gpu(0)
+			
+			
 	def colorize(self, inputdir = None, outputdir = None, **kwargs):
 		
 		"""
 		Colorize images using deoldify.
 		Defaults options (you can override any option with a keyword argument): 
-		options = {'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':'python', 'process_args':'', 'command_suffix':" >> log.out 2>&1"}
+		options = {'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':sys.executable, 'process_args':'', 'command_suffix':" 2> log.err 1>> log.out"}
 		Note that we use a command suffix to export console outputs to a log file. If you remove this, you could have bugs in jupyter notebooks. It should work in standard python.
 		You can monitor log.out output by using the command "tail -f log.out" in a terminal.
 		You can launch the process with a specific python environment by providing its path with the keyword argument "python_dir".
 		"""
 		
 		#defaults attributes to instance for method
-		options = {'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':'python', 'process_args':'', 'command_suffix':" >> log.out 2>&1"}
+		options = {'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':sys.executable, 'process_args':'', 'command_suffix':" 2> log.err 1>> log.out"}
 		inputdir, outputdir = self._init_process(inputdir, outputdir, "colorize", options, **kwargs)		
+				
+		command = "%s -W ignore -u colorizer.py -i %s -o %s %s %s" % (self.python_dir, inputdir, outputdir, self.process_args, self.command_suffix)
 		
-		tf.logging.set_verbosity(tf.logging.ERROR)
-		
-		if self.process_args[0] != ' ':
-			self.process_args = ' ' + self.process_args
-		
-		command = self.python_dir + ' -u colorizer.py -i ' + inputdir + ' -o ' + outputdir + self.process_args + self.command_suffix
-		#print("raising", self.raising)
-		with IP.quiet_and_timeit("Colorizing", self.raising, self.quiet):
+		with self.Q.quiet_and_timeit("Colorizing", self.raising, self.quiet):
 			IP.createdir_ifnotexists(outputdir)
 			subprocess.run(command, shell = True)
 
-	
+		if self.raising:
+			self.logerr()
+			
+		if not self.quiet:
+			for l in self.log():
+				print(l)
+
+
 	def super_resolution(self, inputdir = None, outputdir = None, **kwargs):
 		
 		"""
 		Upsample images using ESRGAN.
 		Defaults options (you can override any option with a keyword argument): 
-		options = {'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':'python', 'process_args':'', 'command_suffix':" >> log.out 2>&1"}
+		options = {'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':sys.executable, 'process_args':'', 'command_suffix':" 2> log.err 1>> log.out"}
 		Note that we use a command suffix to export console outputs to a log file. If you remove this, you could have bugs in jupyter notebooks. It should work in standard python.
 		You can monitor log.out output by using the command "tail -f log.out" in a terminal.
 		You can launch the process with a specific python environment by providing its path with the keyword argument "python_dir".
 		"""
 		
 		#defaults attributes to instance for method
-		options = {'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':'python', 'process_args':'', 'command_suffix':" >> log.out 2>&1"}
-		inputdir, outputdir = self._init_process(inputdir, outputdir, "colorize", options, **kwargs)		
-		
-		tf.logging.set_verbosity(tf.logging.ERROR)
+		options = {'working_dir':'./', 'raising':True, 'quiet':True, 'python_dir':sys.executable, 'process_args':'', 'command_suffix':" 2> log.err 1>> log.out"}
+		inputdir, outputdir = self._init_process(inputdir, outputdir, "super_resolution", options, **kwargs)		
 
-		command = self.python_dir + ' -u superresolution.py -i ' + inputdir + ' -o ' + outputdir + self.process_args + self.command_suffix
-		#print("raising", self.raising)
-		with IP.quiet_and_timeit("Super-resolving", self.raising, self.quiet):
+		command = "%s -W ignore -u superresolution.py -i %s -o %s %s %s" % (self.python_dir, inputdir, outputdir, self.process_args, self.command_suffix)
+		
+		with self.Q.quiet_and_timeit("Super-resolving", self.raising, self.quiet):
 			IP.createdir_ifnotexists(outputdir)
 			subprocess.run(command, shell = True)
 		
+		if self.raising:
+			self.logerr()
+			
+		if not self.quiet:
+			for l in self.log():
+				print(l)
+
+
+				
+	def merge(self, inputdirs, outputdir, **kwargs):
+		
+		"""		
+		merge (compute average) of folders parwise images
+		inputdirs: list of input directories
+		Defaults options (you can override any option with a keyword argument): 
+		options = {'weights':[1/len(inputdirs)]*len(inputdirs), 'raising':True, 'quiet':True}
+		"""
+		
+		
+		options = {'weights':[1/len(inputdirs)]*len(inputdirs), 'raising':True, 'quiet':True}
+		
+		inputdirs, outputdir = self._init_process(inputdirs, outputdir, "merge", options, **kwargs)
+		
+		with self.Q.quiet_and_timeit("Image merging", self.raising, self.quiet):
+			
+			names = IP.get_filenames(inputdirs[0])
+			
+			for n in names:
+				
+				try:
+					files = [os.path.join(i,n) for i in inputdirs]
+
+					merged = IP.image_average(files,self.weights)
+
+					merged.save(os.path.join(outputdir,n))
+					
+				except Exception as e:
+					
+					self.Q.force_print(e)
+	
 	def _init_process(self, inputdir, outputdir, process, default_options, **kwargs):
 		
 		"""
@@ -276,8 +305,11 @@ class ImageRestorer:
 		#if outputdir is not provided, override inputdir with process result
 		if outputdir == None:
 			outputdir = inputdir
-		elif outputdir != inputdir:
-			IP.initdir(outputdir)
+			
+		elif outputdir != inputdir:			
+			if not ( (type(inputdir) is list) and (outputdir in inputdir) ):
+				#initialize only if diffrent from inputdir
+				IP.initdir(outputdir)
 		
 		
 		options = default_options
@@ -293,108 +325,66 @@ class ImageRestorer:
 		
 		IP.createdir_ifnotexists(outputdir)
 		
+		if self._resetgpu:
+			IP.reset_gpu(0)
+		
 		return inputdir, outputdir
-	
-	
-	
-	
-#Stripes removal: adapted from https://github.com/jtguan/Wavelet-Deep-Neural-Network-for-Stripe-Noise-Removal (CC-BY license)
-#################################
+
+
+	def display(self, **kwargs):
 		
-class StripeRemover:
+		if len(self._history) == 0:
+			print("You did not perform any process yet. No image folder to display.")
+			return
+		
+		last_folder = self._history[-1]["output"]
+		IP.display_folder(last_folder, **kwargs)
 	
-	def __init__(self, working_dir):
-		self.working_dir = working_dir
+	def log(self, lines = 10):
 		
-	#copy-paste from main.py (defined as a function) (from https://github.com/jtguan/Wavelet-Deep-Neural-Network-for-Stripe-Noise-Removal CC-BY license)
-	def stripes_removal(self, input_dir, output_dir):
-
-		working_dir = self.working_dir
-		# -*- coding: utf-8 -*-
-		"""
-		Created on Sun Nov 25 19:08:40 2018
-
-		@author: jtguan@stu.xidian.edu.cn
-		"""
-
-
-
-
-		#-----------------------------------------------------------------------#
-		#-----------------------------------------------------------------------#
-		#-----------------------------------------------------------------------#
-		L2 =None
-		init = 'he_normal'
-
-		def SNRDWNN():
-
-			inpt = Input(shape=(None,None,4))
-			x = Conv2D(filters=64, kernel_size=(3,3), strides=(1,1), padding='same' ,kernel_initializer=init,name='Conv-1')(inpt)
-			x = Activation('relu')(x)
-			for i in range(8):
-				x = Conv2D(filters=64, kernel_size=(3,3), strides=(1,1), padding='same' ,kernel_initializer=init)(x)
-				x = Activation('relu')(x)
-			residual = Conv2D(filters=4, kernel_size=(3,3), strides=(1,1), padding='same' ,kernel_initializer=init, name = 'residual')(x)
-			res = Add(name = 'res')([inpt,residual])
-			model = Model(inputs=inpt, 
-						  outputs=[res,residual],
-						  name = 'DWSRN'
-						  )
-
-			return model
-
-
-
-		checkpoint_file = 'weights'
-
-		WEIGHT_PATH = working_dir+'/'+checkpoint_file+'/weight.hdf5'
-		save_dir = output_dir
-		multi_GPU = 0
-		#----------------------------------------------------------------------#
-		test_dir = input_dir+'/'
-
-
-		model =  SNRDWNN()
-		model.load_weights(WEIGHT_PATH)
-		print('Start to test on {}'.format(test_dir))
-		out_dir = output_dir + '/'
-		if not os.path.exists(out_dir):
-				os.mkdir(out_dir)
-
-		name = []
+		logdata = []
 		
-		#file_list = os.listdir(test_dir)
-		#process only files
-		#file_list = [f for f in file_list if os.path.isfile(os.path.join(test_dir,f))]
+		if os.path.exists('log.out'):
 		
-		orignames = glob.glob(os.path.join(test_dir, '*'))
+			with open('log.out', 'r') as myfile:
+				logdata = myfile.readlines()
+				
+		if os.path.exists('log.err'):
 		
-		for orig in orignames:
+			with open('log.err', 'r') as myfile:
+				logdataerr = myfile.readlines()	
+		
+			logdata = logdata+logdataerr
+
+		if len(logdata) > 0:
+			if len(logdata) < lines:
+				return logdata
+
+			return logdata[-lines:]
+		
+		else:
+			logdata = 'No log.out file. Using restorer history instead.\n\n %s' % (self._history)
 			
-			fold,file = os.path.split(orig)
-			# read image
-			img_clean = np.array(Image.open(test_dir + file), dtype='float32') / 255.0
-			img_test = img_clean.astype('float32')
-			if(len(img_test.shape)>2):
-				img_test = img_test[:,:,0]
-			# predict
-			x_test = img_test.reshape(1, img_test.shape[0], img_test.shape[1], 1) 
-			LLY,(LHY,HLY,HHY) = pywt.dwt2(img_test, 'haar')
-			Y = np.stack((LLY,LHY,HLY,HHY),axis=2)
-			# predict
-			x_test = np.expand_dims(Y,axis=0)
-			y_pred,noise = model.predict(x_test)
-			# calculate numeric metrics
-			pred = np.stack((y_pred[0,:,:,0],y_pred[0,:,:,1],y_pred[0,:,:,2],y_pred[0,:,:,3]),axis=2)
-			coeffs_pred = y_pred[0,:,:,0],(y_pred[0,:,:,1],y_pred[0,:,:,2],y_pred[0,:,:,3])
-			img_out = pywt.idwt2(coeffs_pred, 'haar')
-			# calculate numeric metrics
-			img_out = np.clip(img_out, 0, 1)
-			filename = file    # get the name of image file
-			name.append(filename)
-			img_out = Image.fromarray((img_out*255).astype('uint8')) 
-			img_out.save(out_dir + filename)
-
-			print('Saving result to '+out_dir + filename)
-
-		print('Test Over')
+			return logdata
+	
+	
+	def history(self):
+		
+		return self._history
+	
+	
+	def logerr(self, raising = False):
+		
+		if os.path.exists('log.err'):
+			with open('log.err') as f:
+				logdata = f.readlines()
+				if len(logdata) > 0:						
+					print('Error or warning occured during process. Please check output below.')
+					for l in logdata:
+						if raising:
+							raise Exception(l)
+						else:
+							print(l)
+		
+		return logdata
+	
