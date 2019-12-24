@@ -378,13 +378,14 @@ class ImageRestorer:
 		if os.path.exists('log.err'):
 			with open('log.err') as f:
 				logdata = f.readlines()
-				if len(logdata) > 0:						
-					print('Error or warning occured during process. Please check output below.')
-					for l in logdata:
-						if raising:
-							raise Exception(l)
-						else:
-							print(l)
+				if len(logdata) > 0:
+					if any(['error' in l.lower() for l in logdata]):
+						print('Error or warning occured during process. Please check output below.')
+						for l in logdata:
+							if raising:
+								raise Exception(l)
+							else:
+								print(l)
 		
 		return logdata
 	
