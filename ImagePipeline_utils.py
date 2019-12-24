@@ -460,6 +460,7 @@ def get_filenames(directory):
 def display_folder(directory, limit = 10, **kwargs):
 	
 	files = get_filepaths(directory)
+	files.sort()
 	if len(files) > limit:
 		files = files[:limit]
 	
@@ -478,7 +479,7 @@ def compare_folders(dirs, labels = [], **kwargs):
 
 	first_dir = dirlist[0]
 	names = get_filenames(first_dir)
-	
+	names.sort()
 	for n in names:
 		paths = [glob(os.path.join(d,osp.splitext(n)[0]+'*'))[0] for d in dirlist]
 		display_images([PIL.Image.open(p) for p in paths], [os.path.split(d)[1] for d in dirlist], **kwargs)
