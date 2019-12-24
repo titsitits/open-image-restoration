@@ -21,7 +21,7 @@ The project is a work in progress. However, it is already functional and **can b
 ## Technical details
 The algorithms currently included in the packages are directly replicated or slightly adapted from external github repositories (see below). These methods were selected based on the above criteria, and after a comparison with other methods (comparison colab notebooks are coming soon). 
 
-### 1. Denoising
+### 1. Denoising (grain removal)
 
 
 [NLRN](https://github.com/Ding-Liu/NLRN) - Liu et al. 2018. Non-Local Recurrent Network for Image Restoration (NeurIPS 2018) - MIT License
@@ -36,7 +36,7 @@ Denoising methods comparison
 </p>
 <hr>
 
-### 2. Stripe noise removal <sub>(work in progress, for now see ImageRestorer.py and/or ImageRestorerTest.ipynb)</sub>
+### 2. Moire removal (stripe noise removal)
 
 [WDNN](https://github.com/jtguan/Wavelet-Deep-Neural-Network-for-Stripe-Noise-Removal) - Guan et al. 2019. Wavelet Deep Neural Network for Stripe Noise Removal. (IEEE Access, 7, 2019) - Apache-2.0 License
 
@@ -57,11 +57,25 @@ Multiple steps of stripe removal with adapted WDNN (image credits: Jean Vandendr
 
 (no leaderboard associated... yet).
 
+<hr>
+<p style="text-align:center;">
+<a href="https://titsitits.github.io/image_restoration/images/colorization_goffaux.png"><img src="https://titsitits.github.io/image_restoration/images/colorization_goffaux.png" style="width:100%; height:auto;"/></a>
+<br>
+Comparison of image colorization methods (image credits: Jean Vandendries. Reuse of this image is prohibited).
+</p>
+<hr>
+
 ### 4. Super-resolution
 [ESRGAN](https://github.com/xinntao/ESRGAN) - Wang et al. 2018. ESRGAN: Enhanced super-resolution generative adversarial networks (ECCV 2018) - Apache-2.0 License
 
 [Paperswithcode.com ranking](https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative)
 
+<hr>
+<p style="text-align:center;">
+<a href="https://titsitits.github.io/image_restoration/images/superres_anne_franck.png"><img src="https://titsitits.github.io/image_restoration/images/superres_anne_franck.png" style="width:100%; height:auto;"/></a>
+<br>
+Comparison of image super-resolution methods.
+</p>
 <hr>
 
 Many thanks to the authors of these awesome contributions to image restoration research, and for sharing them as open-source projects. 
