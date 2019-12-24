@@ -43,8 +43,6 @@ def colorize(args):
 	
 	count = 0
 	
-	from os import path
-	
 	col_output_dir = args.output_dir
 	col_input_dir = args.input_dir
 	
