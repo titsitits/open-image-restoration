@@ -411,7 +411,7 @@ def concat_images(img_list, labels = [], imagetype = None, sameheight = True, im
 			if sameheight: #force width and height
 				images = [im.resize( (int(imagewidth),int(imageheight)),PIL.Image.ANTIALIAS ) for im in images]
 			else: #force width (keep aspect ratio)
-				images = [im.resize( (int(imagewidth),int(im.height)),PIL.Image.ANTIALIAS ) for im in images]
+				images = [im.resize( (int(imagewidth),(int(im.height*imagewidth/im.width)),PIL.Image.ANTIALIAS ) for im in images]
 		else: #force height (keep aspect ratio)
 			images = [im.resize( (int(im.width*imageheight/im.height), imageheight) ,PIL.Image.ANTIALIAS) for im in images]
 			
