@@ -80,6 +80,45 @@ Comparison of image super-resolution methods.
 
 Many thanks to the authors of these awesome contributions to image restoration research, and for sharing them as open-source projects. 
 
+## Requirements/Installation
+
+(more detailed info coming soon)
+
+You need a CUDA-compatible GPU.
+
+Tested with:
+* Python 3.*
+* CUDA
+* Tensorflow
+* Pytorch >= 1.1
+* Torchvision >= 0.3.0
+
+
+In a Google Colab notebook, you can use this:
+
+```python
+import os
+from os.path import *
+basedir = "/content"
+
+# Import library
+repodir = join(basedir,"open-image-restoration")
+if not exists(repodir):
+  os.chdir(basedir)
+  !git clone https://github.com/titsitits/open-image-restoration {repodir}
+
+os.chdir(repodir)
+
+#Todo: create a pip module
+#Specific dependencies needed for colorization
+!pip install --quiet -r requirements.txt
+
+import ImagePipeline_utils as IP
+import ImageRestorer
+restorer = ImageRestorer.ImageRestorer()
+```
+
+
 ## More information
 
 A more detailed comparison of State-of-the-art super-resolution algorithms can be found in this **[Google Colab Notebook](https://colab.research.google.com/drive/1x7wHaiJ-_rPfRqz1DcRJ_Hbq61t6lFKi)**.
