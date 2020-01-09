@@ -142,6 +142,22 @@ IP.compare_folders([inputdir, outputdir])
 
 ```
 
+## Output examples (Christmas Truce, 1914)
+
+These results can be reproduced in this notebook in Google Colab: 
+https://github.com/titsitits/open-image-restoration/blob/master/Colab_Notebooks/Christmas_Truce_Restoration.ipynb
+
+<hr>
+<p style="text-align:center;">
+<a href="https://raw.githubusercontent.com/titsitits/open-image-restoration/master/blog%20image%20restoration/restoration1.png"><img src="https://raw.githubusercontent.com/titsitits/open-image-restoration/master/blog%20image%20restoration/restoration1.png" style="width:100%; height:auto;"/></a>
+  <a href="https://raw.githubusercontent.com/titsitits/open-image-restoration/master/blog%20image%20restoration/restoration2.png"><img src="https://raw.githubusercontent.com/titsitits/open-image-restoration/master/blog%20image%20restoration/restoration2.png" style="width:100%; height:auto;"/></a>
+  <a href="https://raw.githubusercontent.com/titsitits/open-image-restoration/master/blog%20image%20restoration/restoration3.png"><img src="https://raw.githubusercontent.com/titsitits/open-image-restoration/master/blog%20image%20restoration/restoration3.png" style="width:100%; height:auto;"/></a>
+  <a href="https://raw.githubusercontent.com/titsitits/open-image-restoration/master/blog%20image%20restoration/restoration4.png"><img src="https://raw.githubusercontent.com/titsitits/open-image-restoration/master/blog%20image%20restoration/restoration4 (Christmas .png" style="width:100%; height:auto;"/></a>
+<br>
+Examples of old image restoration (Christmas Truce, 1914).
+</p>
+<hr>
+
 
 ## More information
 
