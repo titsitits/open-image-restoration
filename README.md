@@ -118,6 +118,30 @@ import ImageRestorer
 restorer = ImageRestorer.ImageRestorer()
 ```
 
+## Usage
+
+(more detailed info to come)
+
+```python
+inputdir = "path/to/your/images"
+outputdir = "path/to/output" #(can be inputdir)
+
+#Todo: make restorer available from outside repo directory
+os.chdir(repodir)
+
+# Restore images
+restorer.preprocess(inputdir, outputdir, gray=True) #resize if needed (by default limit to 1000x1000px
+restorer.remove_stripes() #reduce image moire (WDNN)
+restorer.denoise() #remove image grain (NLRN)
+restorer.remove_stripes(process_args="-n 2") #reduce remaining image moire (n iterations)
+restorer.colorize() #colorize image (first time takes a long time as large models must be downloaded)
+restorer.super_resolution() #upsample image
+
+#Compare input and output folders
+IP.compare_folders([inputdir, outputdir])
+
+```
+
 
 ## More information
 
