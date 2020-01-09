@@ -28,5 +28,6 @@ log.out
 
 !/.gitignore  # explicitly do not ignore .gitignore
 !/White paper - super-resolution (french)/Whitepapersuperresolution_fichiers/*.png
+!/blog image restoration/*.png
 
 
