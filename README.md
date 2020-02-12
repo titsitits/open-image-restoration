@@ -17,7 +17,7 @@ This project gathers together and packages various image restoration techniques 
 * Python implementation (easier to use together, to share, and especially to use in Google Colab).
 
 ## Demo
-The project is a work in progress. However, it is already functional and **can be tested on your own images** through this **[demo in Google Colab](https://colab.research.google.com/github/titsitits/open-image-restoration/blob/master/ImageRestorationColab.ipynb)**.
+The project is a work in progress. However, it is already functional and **can be tested on your own images** through this **[demo in Google Colab](https://colab.research.google.com/github/titsitits/open-image-restoration/blob/master/Colab_Notebooks/Demo_Image_Restoration.ipynb)**.
 
 ## Technical details
 The algorithms currently included in the packages are directly replicated or slightly adapted from external github repositories (see below). These methods were selected based on the above criteria, and after a comparison with other methods (comparison colab notebooks are coming soon). 
