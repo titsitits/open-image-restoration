@@ -1,4 +1,4 @@
-#The dependencies below are needed for colorization algorithme (DeOlfidy)
+#The dependencies below are needed for colorization algorithm (DeOlfidy)
 fastai==1.0.51
 torch==1.0.1
 torchvision==0.2.2
