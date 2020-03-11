@@ -165,6 +165,11 @@ Examples of old image restoration (Christmas Truce, 1914).
 A more detailed comparison of State-of-the-art super-resolution algorithms can be found in this **[Google Colab Notebook](https://colab.research.google.com/drive/1x7wHaiJ-_rPfRqz1DcRJ_Hbq61t6lFKi)**.
 A blog post (in french) presents an overview on the subject [here](https://titsitits.github.io/super_resolution/)
 
+## Credits
+
+This research was conducted at CETIC, as part of the FEDER Digistorm project, co-financed by the European Union and the Wallonia Region.
+
+
 ---
 
 <sup>1</sup>: In my research of IR algorithms, I subjectively considered Matlab and Caffe as painfull dependencies. Matlab is simply not free (and simpy not usable in Google colab), and Caffe hard to install, especially in Google Colab. Both of these issues make the algorithms hard to share to the community.
