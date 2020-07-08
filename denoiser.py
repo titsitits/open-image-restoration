@@ -32,21 +32,21 @@ import glob
 
 def NLRN(args):
 	
-	tf.logging.set_verbosity(tf.logging.ERROR)
+	tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 	
-	config = tf.ConfigProto()
+	config = tf.compat.v1.ConfigProto()
 	#config.gpu_options.per_process_gpu_memory_fraction = 0.5 # maximun alloc gpu50% of MEM
 	#config.gpu_options.allow_growth = True #allocate dynamically
 	#sess = tf.Session(config = config)
 	
 	#mysess = 
 	
-	with tf.Session(graph=tf.Graph(), config = config) as sess:
+	with tf.compat.v1.Session(graph=tf.Graph(), config = config) as sess:
 
-		metagraph_def = tf.saved_model.loader.load(
-			sess, [tf.saved_model.tag_constants.SERVING], args.model_dir)
+		metagraph_def = tf.compat.v1.saved_model.loader.load(
+			sess, [tf.saved_model.SERVING], args.model_dir)
 		signature_def = metagraph_def.signature_def[
-			tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY]
+			tf.saved_model.DEFAULT_SERVING_SIGNATURE_DEF_KEY]
 		input_tensor = sess.graph.get_tensor_by_name(
 			signature_def.inputs['inputs'].name)
 		output_tensor = sess.graph.get_tensor_by_name(
@@ -245,4 +245,3 @@ if __name__ == '__main__':
 	#IP.reset_gpu(0)
 	
 	#input("Press Enter to continue...")
-	
